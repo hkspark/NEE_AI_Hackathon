@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Insight Engine — Training Feedback Dashboard</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">IE</span>
+      <div>
+        <h1>Insight Engine</h1>
+        <p class="subtitle">Training Feedback Dashboard</p>
+      </div>
+    </div>
+    <div class="filters">
+      <label>Training
+        <select id="filter-training"><option value="">All</option></select>
+      </label>
+      <label>Business Unit
+        <select id="filter-bu"><option value="">All</option></select>
+      </label>
+      <label>Sentiment
+        <select id="filter-sentiment"><option value="">All</option></select>
+      </label>
+      <button id="reset-filters" type="button">Reset</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="kpis" id="kpis"></section>
+
+    <section class="grid">
+      <div class="card span-2">
+        <h2>Average Rating by Training</h2>
+        <div class="chart-wrap"><canvas id="chart-rating-training"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>Sentiment Mix</h2>
+        <div class="chart-wrap"><canvas id="chart-sentiment"></canvas></div>
+      </div>
+
+      <div class="card span-2">
+        <h2>Feedback Themes</h2>
+        <div class="chart-wrap"><canvas id="chart-themes"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>Rating Distribution</h2>
+        <div class="chart-wrap"><canvas id="chart-rating-dist"></canvas></div>
+      </div>
+
+      <div class="card span-2">
+        <h2>Sentiment by Business Unit</h2>
+        <div class="chart-wrap"><canvas id="chart-bu-sentiment"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>Delivery Format</h2>
+        <div class="chart-wrap"><canvas id="chart-format"></canvas></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="table-head">
+        <h2>Response Detail</h2>
+        <input type="search" id="table-search" placeholder="Search feedback text, theme, action&hellip;" />
+      </div>
+      <div class="table-wrap">
+        <table id="response-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Training</th><th>Type</th><th>Business Unit</th><th>Role</th>
+              <th>Rating</th><th>Sentiment</th><th>Theme</th>
+              <th>Feedback</th><th>Suggested Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="table-footer" id="table-count"></p>
+    </section>
+  </main>
+
+  <footer class="appfoot">
+    <span>Insight Engine &bull; data-driven training insights</span>
+    <span id="footer-meta"></span>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
