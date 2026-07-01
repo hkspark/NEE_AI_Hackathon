@@ -1,0 +1,90 @@
+// ============================================================================
+// DAX Measures — Insight Engine Training Feedback
+// ----------------------------------------------------------------------------
+// HOW TO USE:
+//   In Power BI Desktop, with the "Feedback" table loaded:
+//   Modeling > New measure, then paste each measure below (one at a time).
+//   Names are given before each definition. Create them all to power the
+//   suggested visuals at the bottom of this file.
+// ============================================================================
+
+// ---- Volume ----
+Total Responses = COUNTROWS ( Feedback )
+
+// ---- Rating ----
+Avg Rating = AVERAGE ( Feedback[Rating] )
+
+Avg Rating (1dp) = ROUND ( [Avg Rating], 1 )
+
+Rating StdDev = STDEV.P ( Feedback[Rating] )
+
+// ---- Sentiment counts ----
+Positive Count = CALCULATE ( [Total Responses], Feedback[Sentiment] = "Positive" )
+Negative Count = CALCULATE ( [Total Responses], Feedback[Sentiment] = "Negative" )
+Mixed Count    = CALCULATE ( [Total Responses], Feedback[Sentiment] = "Mixed" )
+
+// ---- Sentiment share ----
+Positive % =
+DIVIDE ( [Positive Count], [Total Responses] )
+
+Negative % =
+DIVIDE ( [Negative Count], [Total Responses] )
+
+// Net sentiment = (Positive - Negative) / Total, range -1..1
+Net Sentiment =
+DIVIDE ( [Positive Count] - [Negative Count], [Total Responses] )
+
+// Average of the numeric SentimentScore column (-1/0/1)
+Avg Sentiment Score = AVERAGE ( Feedback[SentimentScore] )
+
+// ---- CSAT-style buckets (uses RatingBucket column from the M script) ----
+Detractor % =
+DIVIDE (
+    CALCULATE ( [Total Responses], Feedback[RatingBucket] = "Detractor (1-2)" ),
+    [Total Responses]
+)
+
+Promoter % =
+DIVIDE (
+    CALCULATE ( [Total Responses], Feedback[RatingBucket] = "Promoter (4-5)" ),
+    [Total Responses]
+)
+
+// Simple NPS-like score on the 1-5 scale: Promoters% - Detractors%
+Satisfaction Score = [Promoter %] - [Detractor %]
+
+// ---- Theme insight ----
+Top Theme =
+VAR Ranked =
+    TOPN ( 1, VALUES ( Feedback[Theme] ), [Total Responses], DESC )
+RETURN
+    CONCATENATEX ( Ranked, Feedback[Theme], ", " )
+
+Responses For Top Theme =
+MAXX (
+    ADDCOLUMNS ( VALUES ( Feedback[Theme] ), "@c", [Total Responses] ),
+    [@c]
+)
+
+// ---- Worst-performing training (lowest avg rating) in current filter ----
+Lowest Rated Training =
+VAR Ranked =
+    TOPN ( 1, VALUES ( Feedback[TrainingName] ), [Avg Rating], ASC )
+RETURN
+    CONCATENATEX ( Ranked, Feedback[TrainingName], ", " )
+
+// ============================================================================
+// SUGGESTED VISUALS (build these on the report canvas)
+// ----------------------------------------------------------------------------
+// Cards:        [Total Responses], [Avg Rating (1dp)], [Positive %],
+//               [Negative %], [Net Sentiment], [Top Theme]
+// Bar chart:    Axis = TrainingName,  Value = [Avg Rating]      (sort ascending)
+// Stacked col:  Axis = BusinessUnit,  Legend = Sentiment,       Value = [Total Responses]
+// Donut:        Legend = Sentiment,   Value = [Total Responses]
+// Bar chart:    Axis = Theme,         Value = [Total Responses] (sort descending)
+// Column:       Axis = Rating,        Value = [Total Responses] (distribution)
+// Line chart:   Axis = SessionMonth,  Value = [Avg Rating]      (trend over time)
+// Matrix:       Rows = TrainingName,  Cols = Sentiment,         Value = [Total Responses]
+// Table:        TrainingName, Theme, [Avg Rating], [Total Responses], SuggestedAction
+// Slicers:      TrainingName, BusinessUnit, TrainingType, AttendeeType, SessionDate
+// ============================================================================
