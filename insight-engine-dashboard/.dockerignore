@@ -1,0 +1,6 @@
+data/
+powerbi/
+README.md
+*.ps1
+.git
+.gitignore

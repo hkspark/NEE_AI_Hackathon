@@ -1,0 +1,8 @@
+services:
+  dashboard:
+    build: .
+    image: insight-engine-dashboard:latest
+    container_name: insight-engine-dashboard
+    ports:
+      - "8080:80"
+    restart: unless-stopped
